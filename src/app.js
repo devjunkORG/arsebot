@@ -74,7 +74,7 @@ request(`http://api.football-data.org/v1/competitions/${PREMIER_LEAGUE_ID}/leagu
   const arsenalIndex = findArsenalIndex(data.standing);
   const tableObject = buildTableObject(data.standing,arsenalIndex);
   const markdownTable = buildMarkdownTable(tableObject);
-  reddit('/r/willithappen/about/edit.json')
+  reddit('/r/sidebartests/about/edit.json')
   .get()
   .then(result => {
     let data = result.data;
