@@ -5,11 +5,14 @@
   "main": "./dist/app.js",
   "scripts": {
     "test": "mocha",
-    "build": "babel ./src -d ./dist"
+    "build": "babel ./src -d ./dist",
+    "start": "npm run build && node dist/app.js"
   },
   "author": "Vicente Canales <me@devjunk.org>",
   "license": "MIT",
   "dependencies": {
+    "json2md": "^1.5.5",
+    "request": "^2.78.0",
     "snoocore": "^3.3.1"
   },
   "devDependencies": {
