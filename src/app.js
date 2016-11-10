@@ -4,9 +4,9 @@ import json2md from 'json2md';
 
 const ACCOUNT_NAME = process.env.REDDIT_ACCOUNT_NAME;
 const ACCOUNT_PASSWORD = process.env.REDDIT_ACCOUNT_PASSWORD;
-const STATSFC_API_KEY = process.env.STATSFC_API_KEY;
 const REDDIT_API_KEY = process.env.REDDIT_API_KEY;
 const REDDIT_API_SECRET = process.env.REDDIT_API_SECRET;
+const SUBREDDIT = process.env.SUBREDDIT;
 const PREMIER_LEAGUE_ID = 426;
 
 const reddit = new Snoocore({
@@ -74,7 +74,7 @@ request(`http://api.football-data.org/v1/competitions/${PREMIER_LEAGUE_ID}/leagu
   const arsenalIndex = findArsenalIndex(data.standing);
   const tableObject = buildTableObject(data.standing,arsenalIndex);
   const markdownTable = buildMarkdownTable(tableObject);
-  reddit('/r/sidebartests/about/edit.json')
+  reddit(`/r/${SUBREDDIT}/about/edit.json`)
   .get()
   .then(result => {
     let data = result.data;
