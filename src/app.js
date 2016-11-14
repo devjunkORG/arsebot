@@ -8,6 +8,7 @@ const REDDIT_API_KEY = process.env.REDDIT_API_KEY;
 const REDDIT_API_SECRET = process.env.REDDIT_API_SECRET;
 const SUBREDDIT = process.env.SUBREDDIT;
 const PREMIER_LEAGUE_ID = 426;
+const CHAMPIONS_LEAGUE_ID = 440;
 
 const reddit = new Snoocore({
   userAgent: '/u/devjunk tablebot@0.0.1', // unique string identifying the app
@@ -23,7 +24,7 @@ const reddit = new Snoocore({
 
 const findArsenalIndex = dataset => {
   let arsenal = dataset.reduce((prev,current,index) => {
-      if (current.teamName === 'Arsenal FC') {
+      if (current.teamName === 'Arsenal FC' || current.team === 'Arsenal FC') {
         return index;
       }
       return prev;
@@ -66,14 +67,34 @@ const buildMarkdownTable = tableData => {
   });
 };
 
-request(`http://api.football-data.org/v1/competitions/${PREMIER_LEAGUE_ID}/leagueTable  `, (err,res,body) => {
-  if (err) {
-    throw new Error(err);
-  }
-  const data = JSON.parse(body);
-  const arsenalIndex = findArsenalIndex(data.standing);
-  const tableObject = buildTableObject(data.standing,arsenalIndex);
-  const markdownTable = buildMarkdownTable(tableObject);
+const getLeaguesData = leagueId => {
+  return new Promise((resolve,reject) => {
+    request(`http://api.football-data.org/v1/competitions/${leagueId}/leagueTable  `, (err,res,body) => {
+      if (err) {
+        reject(err);
+      }
+      const data = JSON.parse(body);
+      console.log(data);
+      console.log('TYPEOFDATA:',typeof data);
+      const arsenalIndex = findArsenalIndex(arsData);
+      const tableObject = buildTableObject(data.standing,arsenalIndex);
+      const markdownTable = buildMarkdownTable(tableObject);
+      resolve(markdownTable);
+    });
+  });
+}
+getLeaguesData(PREMIER_LEAGUE_ID)
+.then(result => {
+  result.concat(
+    getLeaguesData(CHAMPIONS_LEAGUE_ID)
+    .then(data => {
+      return data;
+    })
+  );
+  return result;
+})
+.then(markdownTable => {
+  console.log(markdownTable);
   reddit(`/r/${SUBREDDIT}/about/edit.json`)
   .get()
   .then(result => {
@@ -90,4 +111,5 @@ request(`http://api.football-data.org/v1/competitions/${PREMIER_LEAGUE_ID}/leagu
   .done(result => {
     console.log(JSON.stringify(result,null,4));
   });
-});
+})
+.catch(e => { throw new Error(e); });
