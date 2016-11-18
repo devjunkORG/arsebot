@@ -2,11 +2,17 @@ import Snoocore from 'snoocore';
 import request from 'request';
 import json2md from 'json2md';
 
-const ACCOUNT_NAME = process.env.REDDIT_ACCOUNT_NAME;
-const ACCOUNT_PASSWORD = process.env.REDDIT_ACCOUNT_PASSWORD;
-const REDDIT_API_KEY = process.env.REDDIT_API_KEY;
-const REDDIT_API_SECRET = process.env.REDDIT_API_SECRET;
-const SUBREDDIT = process.env.SUBREDDIT;
+//const ACCOUNT_NAME = process.env.REDDIT_ACCOUNT_NAME;
+//const ACCOUNT_PASSWORD = process.env.REDDIT_ACCOUNT_PASSWORD;
+//const REDDIT_API_KEY = process.env.REDDIT_API_KEY;
+//const REDDIT_API_SECRET = process.env.REDDIT_API_SECRET;
+//const SUBREDDIT = process.env.SUBREDDIT;
+//const PREMIER_LEAGUE_ID = 426;
+const ACCOUNT_NAME = '******' 
+const ACCOUNT_PASSWORD = '*********' 
+const REDDIT_API_KEY = '**************' 
+const REDDIT_API_SECRET = '***************************'
+const SUBREDDIT = 'Eabryt' 
 const PREMIER_LEAGUE_ID = 426;
 
 const reddit = new Snoocore({
@@ -55,6 +61,7 @@ const buildMarkdownTable = tableData => {
     table: {
       headers: ['\\#','Team','GD','Points'],
       rows: tableData.map(team => {
+        matchSprite(team); 
         return [
           team.position,
           team.teamName,
@@ -66,6 +73,72 @@ const buildMarkdownTable = tableData => {
   });
 };
 
+const matchSprite = team => {
+    switch(team.teamName) {
+        case "Arsenal FC":
+            team.teamName = "[](#sprite1-p1)";
+            break;
+        case "AFC Bournemouth FC":
+            team.teamName = "[](#sprite1-p218)";
+            break;
+        case "Burnley FC":
+            team.teamName = "[](#sprite1-p156)";
+            break;
+        case "Chelsea FC":
+            team.teamName = "[](#sprite1-p4)";
+            break;
+        case "Crystal Palace FC":
+            team.teamName = "[](#sprite1-p67)";
+            break;
+        case "Everton FC":
+            team.teamName = "[](#sprite1-p15)";
+            break;
+        case "Hull City FC":
+            team.teamName = "[](#sprite1-p117)";
+            break;
+        case "Leicester City FC":
+            team.teamName = "[](#sprite1-p87)";
+            break;
+        case "Liverpool FC":
+            team.teamName = "[](#sprite1-p3)";
+            break;
+        case "Manchester City FC":
+            team.teamName = "[](#sprite1-p10)";
+            break;
+        case "Manchester United FC":
+            team.teamName = "[](#sprite1-p2)";
+            break;
+        case "Middlesbrough FC":
+            team.teamName = "[](#sprite1-p91)";
+            break;
+        case "Southampton FC":
+            team.teamName = "[](#sprite1-p38)";
+            break;
+        case "Stoke City FC":
+            team.teamName = "[](#sprite1-p81)";
+            break;
+        case "Sunderland FC":
+            team.teamName = "[](#sprite1-p46)";
+            break;
+        case "Swansea City FC":
+            team.teamName = "[](#sprite1-p39)";
+            break;
+        case "Tottenham Hotspur FC":
+            team.teamName = "[](#icon-poop)";
+            break;
+        case "Watford FC":
+            team.teamName = "[](#sprite1-p112)";
+            break;
+        case "West Bromwich Albion FC":
+            team.teamName = "[](#sprite1-p78)";
+            break;
+        case "West Ham United FC":
+            team.teamName = "[](#sprite1-p21)";
+            break;
+        default:
+            console.log("Team Name did not match");
+    }
+}
 request(`http://api.football-data.org/v1/competitions/${PREMIER_LEAGUE_ID}/leagueTable  `, (err,res,body) => {
   if (err) {
     throw new Error(err);
