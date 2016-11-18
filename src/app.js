@@ -2,17 +2,11 @@ import Snoocore from 'snoocore';
 import request from 'request';
 import json2md from 'json2md';
 
-//const ACCOUNT_NAME = process.env.REDDIT_ACCOUNT_NAME;
-//const ACCOUNT_PASSWORD = process.env.REDDIT_ACCOUNT_PASSWORD;
-//const REDDIT_API_KEY = process.env.REDDIT_API_KEY;
-//const REDDIT_API_SECRET = process.env.REDDIT_API_SECRET;
-//const SUBREDDIT = process.env.SUBREDDIT;
-//const PREMIER_LEAGUE_ID = 426;
-const ACCOUNT_NAME = '******' 
-const ACCOUNT_PASSWORD = '*********' 
-const REDDIT_API_KEY = '**************' 
-const REDDIT_API_SECRET = '***************************'
-const SUBREDDIT = 'Eabryt' 
+const ACCOUNT_NAME = process.env.REDDIT_ACCOUNT_NAME;
+const ACCOUNT_PASSWORD = process.env.REDDIT_ACCOUNT_PASSWORD;
+const REDDIT_API_KEY = process.env.REDDIT_API_KEY;
+const REDDIT_API_SECRET = process.env.REDDIT_API_SECRET;
+const SUBREDDIT = process.env.SUBREDDIT;
 const PREMIER_LEAGUE_ID = 426;
 
 const reddit = new Snoocore({
