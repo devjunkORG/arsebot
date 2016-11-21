@@ -55,10 +55,10 @@ const buildMarkdownTable = tableData => {
     table: {
       headers: ['\\#','Team','GD','Points'],
       rows: tableData.map(team => {
-        matchSprite(team);
+        const teamName = matchSprite(team.teamName);
         return [
           team.position,
-          team.teamName,
+          teamName,
           team.goalDifference,
           team.points
         ]
@@ -67,72 +67,35 @@ const buildMarkdownTable = tableData => {
   });
 };
 
-const matchSprite = team => {
-    switch(team.teamName) {
-        case "Arsenal FC":
-            team.teamName = "[](#sprite1-p1)";
-            break;
-        case "AFC Bournemouth FC":
-            team.teamName = "[](#sprite1-p218)";
-            break;
-        case "Burnley FC":
-            team.teamName = "[](#sprite1-p156)";
-            break;
-        case "Chelsea FC":
-            team.teamName = "[](#sprite1-p4)";
-            break;
-        case "Crystal Palace FC":
-            team.teamName = "[](#sprite1-p67)";
-            break;
-        case "Everton FC":
-            team.teamName = "[](#sprite1-p15)";
-            break;
-        case "Hull City FC":
-            team.teamName = "[](#sprite1-p117)";
-            break;
-        case "Leicester City FC":
-            team.teamName = "[](#sprite1-p87)";
-            break;
-        case "Liverpool FC":
-            team.teamName = "[](#sprite1-p3)";
-            break;
-        case "Manchester City FC":
-            team.teamName = "[](#sprite1-p10)";
-            break;
-        case "Manchester United FC":
-            team.teamName = "[](#sprite1-p2)";
-            break;
-        case "Middlesbrough FC":
-            team.teamName = "[](#sprite1-p91)";
-            break;
-        case "Southampton FC":
-            team.teamName = "[](#sprite1-p38)";
-            break;
-        case "Stoke City FC":
-            team.teamName = "[](#sprite1-p81)";
-            break;
-        case "Sunderland FC":
-            team.teamName = "[](#sprite1-p46)";
-            break;
-        case "Swansea City FC":
-            team.teamName = "[](#sprite1-p39)";
-            break;
-        case "Tottenham Hotspur FC":
-            team.teamName = "[](#icon-poop)";
-            break;
-        case "Watford FC":
-            team.teamName = "[](#sprite1-p112)";
-            break;
-        case "West Bromwich Albion FC":
-            team.teamName = "[](#sprite1-p78)";
-            break;
-        case "West Ham United FC":
-            team.teamName = "[](#sprite1-p21)";
-            break;
-        default:
-            console.log("Team Name did not match");
-    }
-}
+const matchSprite = (team) => {
+  const teams = {
+    "Arsenal FC": () => '[](#sprite1-p1)',
+    "AFC Bournemouth FC": () => '[](#sprite1-p218)',
+    "Burnley FC": () => '[](#sprite1-p156)',
+    "Chelsea FC": () => '[](#sprite1-p4)',
+    "Crystal Palace FC": () => '[](#sprite1-p67)',
+    "Everton FC": () => '[](#sprite1-p15)',
+    "Hull City FC": () => '[](#sprite1-p117)',
+    "Leicester City FC": () => '[](#sprite1-p87)',
+    "Liverpool FC": () => '[](#sprite1-p3)',
+    "Manchester City FC": () => '[](#sprite1-p10)',
+    "Manchester United FC": () => '[](#sprite1-p2)',
+    "Middlesbrough FC": () => '[](#sprite1-p91)',
+    "Southampton FC": () => '[](#sprite1-p38)',
+    "Stoke City FC": () => '[](#sprite1-p81)',
+    "Sunderland FC": () => '[](#sprite1-p46)',
+    "Swansea City FC": () => '[](#sprite1-p39)',
+    "Tottenham Hotspur FC": () => '[](#icon-poop)',
+    "Watford FC": () => '[](#sprite1-p112)',
+    "West Bromwich Albion FC": () => '[](#sprite1-p78)',
+    "West Ham United FC": () => '[](#sprite1-p21)'
+  };
+  if (typeof teams[team] !== 'function') {
+    throw new Error('Team name not found');
+  }
+  return teams[team]();
+};
+
 request(`http://api.football-data.org/v1/competitions/${PREMIER_LEAGUE_ID}/leagueTable  `, (err,res,body) => {
   if (err) {
     throw new Error(err);
@@ -141,6 +104,7 @@ request(`http://api.football-data.org/v1/competitions/${PREMIER_LEAGUE_ID}/leagu
   const arsenalIndex = findArsenalIndex(data.standing);
   const tableObject = buildTableObject(data.standing,arsenalIndex);
   const markdownTable = buildMarkdownTable(tableObject);
+  console.log(markdownTable);
   reddit(`/r/${SUBREDDIT}/about/edit.json`)
   .get()
   .then(result => {
