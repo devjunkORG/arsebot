@@ -104,7 +104,6 @@ request(`http://api.football-data.org/v1/competitions/${PREMIER_LEAGUE_ID}/leagu
   const arsenalIndex = findArsenalIndex(data.standing);
   const tableObject = buildTableObject(data.standing,arsenalIndex);
   const markdownTable = buildMarkdownTable(tableObject);
-  console.log(markdownTable);
   reddit(`/r/${SUBREDDIT}/about/edit.json`)
   .get()
   .then(result => {
