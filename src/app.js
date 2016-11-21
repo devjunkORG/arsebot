@@ -8,7 +8,6 @@ const REDDIT_API_KEY = process.env.REDDIT_API_KEY;
 const REDDIT_API_SECRET = process.env.REDDIT_API_SECRET;
 const SUBREDDIT = process.env.SUBREDDIT;
 const PREMIER_LEAGUE_ID = 426;
-const CHAMPIONS_LEAGUE_ID = 440;
 
 const reddit = new Snoocore({
   userAgent: '/u/devjunk tablebot@0.0.1', // unique string identifying the app
@@ -24,7 +23,7 @@ const reddit = new Snoocore({
 
 const findArsenalIndex = dataset => {
   let arsenal = dataset.reduce((prev,current,index) => {
-      if (current.teamName === 'Arsenal FC' || current.team === 'Arsenal FC') {
+      if (current.teamName === 'Arsenal FC') {
         return index;
       }
       return prev;
@@ -56,6 +55,7 @@ const buildMarkdownTable = tableData => {
     table: {
       headers: ['\\#','Team','GD','Points'],
       rows: tableData.map(team => {
+        matchSprite(team);
         return [
           team.position,
           team.teamName,
@@ -67,34 +67,80 @@ const buildMarkdownTable = tableData => {
   });
 };
 
-const getLeaguesData = leagueId => {
-  return new Promise((resolve,reject) => {
-    request(`http://api.football-data.org/v1/competitions/${leagueId}/leagueTable  `, (err,res,body) => {
-      if (err) {
-        reject(err);
-      }
-      const data = JSON.parse(body);
-      console.log(data);
-      console.log('TYPEOFDATA:',typeof data);
-      const arsenalIndex = findArsenalIndex(arsData);
-      const tableObject = buildTableObject(data.standing,arsenalIndex);
-      const markdownTable = buildMarkdownTable(tableObject);
-      resolve(markdownTable);
-    });
-  });
+const matchSprite = team => {
+    switch(team.teamName) {
+        case "Arsenal FC":
+            team.teamName = "[](#sprite1-p1)";
+            break;
+        case "AFC Bournemouth FC":
+            team.teamName = "[](#sprite1-p218)";
+            break;
+        case "Burnley FC":
+            team.teamName = "[](#sprite1-p156)";
+            break;
+        case "Chelsea FC":
+            team.teamName = "[](#sprite1-p4)";
+            break;
+        case "Crystal Palace FC":
+            team.teamName = "[](#sprite1-p67)";
+            break;
+        case "Everton FC":
+            team.teamName = "[](#sprite1-p15)";
+            break;
+        case "Hull City FC":
+            team.teamName = "[](#sprite1-p117)";
+            break;
+        case "Leicester City FC":
+            team.teamName = "[](#sprite1-p87)";
+            break;
+        case "Liverpool FC":
+            team.teamName = "[](#sprite1-p3)";
+            break;
+        case "Manchester City FC":
+            team.teamName = "[](#sprite1-p10)";
+            break;
+        case "Manchester United FC":
+            team.teamName = "[](#sprite1-p2)";
+            break;
+        case "Middlesbrough FC":
+            team.teamName = "[](#sprite1-p91)";
+            break;
+        case "Southampton FC":
+            team.teamName = "[](#sprite1-p38)";
+            break;
+        case "Stoke City FC":
+            team.teamName = "[](#sprite1-p81)";
+            break;
+        case "Sunderland FC":
+            team.teamName = "[](#sprite1-p46)";
+            break;
+        case "Swansea City FC":
+            team.teamName = "[](#sprite1-p39)";
+            break;
+        case "Tottenham Hotspur FC":
+            team.teamName = "[](#icon-poop)";
+            break;
+        case "Watford FC":
+            team.teamName = "[](#sprite1-p112)";
+            break;
+        case "West Bromwich Albion FC":
+            team.teamName = "[](#sprite1-p78)";
+            break;
+        case "West Ham United FC":
+            team.teamName = "[](#sprite1-p21)";
+            break;
+        default:
+            console.log("Team Name did not match");
+    }
 }
-getLeaguesData(PREMIER_LEAGUE_ID)
-.then(result => {
-  result.concat(
-    getLeaguesData(CHAMPIONS_LEAGUE_ID)
-    .then(data => {
-      return data;
-    })
-  );
-  return result;
-})
-.then(markdownTable => {
-  console.log(markdownTable);
+request(`http://api.football-data.org/v1/competitions/${PREMIER_LEAGUE_ID}/leagueTable  `, (err,res,body) => {
+  if (err) {
+    throw new Error(err);
+  }
+  const data = JSON.parse(body);
+  const arsenalIndex = findArsenalIndex(data.standing);
+  const tableObject = buildTableObject(data.standing,arsenalIndex);
+  const markdownTable = buildMarkdownTable(tableObject);
   reddit(`/r/${SUBREDDIT}/about/edit.json`)
   .get()
   .then(result => {
@@ -111,5 +157,4 @@ getLeaguesData(PREMIER_LEAGUE_ID)
   .done(result => {
     console.log(JSON.stringify(result,null,4));
   });
-})
-.catch(e => { throw new Error(e); });
+});
